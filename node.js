@@ -26,7 +26,8 @@ app.use(session({
     resave:false,
     cookie:{
         maxAge: 60000 * 60,
-        secure: false
+        secure: false,
+        user:''
     }
 }))
 app.post('/signup',(req,res)=>{
@@ -84,6 +85,34 @@ app.delete('/delete',(req,res)=>{
     })
 })
 app.post('/login',(req,res)=>{
-    //it modify the above session so the session id goes twice 
+    //it modify the above session so the session id goes twice
+   const user= schema.find(req.body);
+   console.log("we are here")
+    if(user){
+        console.log("we are also here")
+        req.session.user = req.body.firstName;
+        console.log(req.session.user);
+        
+    }
+ 
+})
+app.get('/my',(req,res)=>{
+    console.log("we are here for last")
+    console.log(req.session)
+    console.log(req.session.user);
+    if(req.session.user){
+        console.log(req.session.user);
+        const name = req.session.user.username;
+        schema.find({firstName:name})
+        .then((result)=>{
+            res.send(result);
+        })
+       .catch((err)=>{
+        res.send(err);
+       })
+    }else{
+        res.send('no session');
+
+    }
 })
  //jwt
